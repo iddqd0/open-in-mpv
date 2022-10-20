@@ -31,6 +31,8 @@ type Player struct {
 	// Controls which (video URL) schemes are to be opened by the current
 	// player. There is no match-all, each protocol has to be manuall specified
 	SupportedSchemes []string `yaml:"supported_protocols"`
+	// Socket path/name for the player
+	IpcSocket string `yaml:"ipc_socket"`
 	// Overrides for any generic flag
 	FlagOverrides map[string]string `yaml:"flag_overrides"`
 }
@@ -55,6 +57,7 @@ var defaultConfig = Config{
 			Enqueue:       "",
 			NewWindow:     "",
 			NeedsIpc:      true,
+			IpcSocket:     "/tmp/mpvsocket",
 			FlagOverrides: map[string]string{},
 		},
 	},

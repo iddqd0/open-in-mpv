@@ -190,10 +190,6 @@ func (o Options) GenerateIPC() ([]byte, error) {
 		return []byte{}, err
 	}
 
-	if ret[len(ret)-1] != '\n' {
-		ret = append(ret, '\n')
-	}
-
 	return ret, nil
 }
 

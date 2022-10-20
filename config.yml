@@ -7,6 +7,7 @@ players:
     enqueue: ""
     new_window: ""
     needs_ipc: true
+    ipc_socket: "/tmp/mpvsocket"
     flag_overrides: {}
   celluloid:
     name: Celluloid
@@ -16,6 +17,7 @@ players:
     enqueue: "--enqueue"
     new_window: "--new-window"
     needs_ipc: false
+    ipc_socket: ""
     flag_overrides: 
       "*": "--mpv-%s"
   mpvnet:
@@ -26,4 +28,5 @@ players:
     enqueue: "--queue"
     new_window: ""
     needs_ipc: false
+    ipc_socket: ""
     flag_overrides: {}

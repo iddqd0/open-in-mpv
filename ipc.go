@@ -1,12 +1,15 @@
 package open_in_mpv
 
-import "net"
+import (
+	"net"
+	"time"
+	"runtime"
+	"fmt"
+	
+	npipe "gopkg.in/natefinch/npipe.v2"
+)
 
-const defaultSocket = "/tmp/mpvsocket"
-
-var defaultIpc = Ipc{
-	SocketAddress: defaultSocket,
-}
+var ipcConnection Ipc
 
 // Defines an IPC connection with a UNIX socket
 type Ipc struct {
@@ -17,7 +20,15 @@ type Ipc struct {
 // Send a byte-encoded command to the specified UNIX socket
 func (i *Ipc) Send(cmd []byte) error {
 	var err error
-	i.conn, err = net.Dial("unix", i.SocketAddress)
+	
+	switch runtime.GOOS {
+		case "windows":
+			timeout := time.Millisecond * 150
+			i.conn, err = npipe.DialTimeout(`\\.\pipe\` + i.SocketAddress, timeout)
+		default:
+			i.conn, err = net.Dial("unix", i.SocketAddress)
+	}
+	
 	if err != nil {
 		return err
 	}
@@ -28,8 +39,7 @@ func (i *Ipc) Send(cmd []byte) error {
 		cmd = append(cmd, '\n')
 	}
 
-	_, err = i.conn.Write(cmd)
-	if err != nil {
+	if _, err := fmt.Fprintln(i.conn, string(cmd)); err != nil {
 		return err
 	}
 
@@ -38,10 +48,17 @@ func (i *Ipc) Send(cmd []byte) error {
 
 // Generic public send string command for the default connection
 func SendString(cmd string) error {
-	return defaultIpc.Send([]byte(cmd))
+	return ipcConnection.Send([]byte(cmd))
 }
 
 // Generic public send byte-encoded string command for the default connection
 func SendBytes(cmd []byte) error {
-	return defaultIpc.Send(cmd)
+	return ipcConnection.Send(cmd)
+}
+
+func IpcConnect(path string) error {
+	ipcConnection = Ipc{
+		SocketAddress: path,
+	}
+	return nil
 }

@@ -27,8 +27,11 @@ func main() {
 
 	opts := oim.NewOptions()
 	must(opts.Parse(os.Args[1]))
+	
+	playerOpts := oim.GetPlayerInfo(opts.Player)
 
 	if opts.NeedsIpc {
+		oim.IpcConnect(playerOpts.IpcSocket)
 		cmd, err := opts.GenerateIPC()
 		must(err)
 		err = oim.SendBytes(cmd)
@@ -39,7 +42,8 @@ func main() {
 	}
 
 	args := opts.GenerateCommand()
-	player := exec.Command(opts.Player, args...)
+	//player := exec.Command(opts.Player, args...)
+	player := exec.Command(playerOpts.Executable, args...)
 	log.Println(player.String())
 	must(player.Start())
 	// must(player.Wait())
