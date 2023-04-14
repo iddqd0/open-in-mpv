@@ -28,7 +28,7 @@ func main() {
 	opts := oim.NewOptions()
 	must(opts.Parse(os.Args[1]))
 	
-	playerOpts := oim.GetPlayerInfo(opts.Player)
+	playerOpts := oim.GetPlayerConfig(opts.Player)
 
 	if opts.NeedsIpc {
 		oim.IpcConnect(playerOpts.IpcSocket)

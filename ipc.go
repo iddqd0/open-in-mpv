@@ -34,11 +34,6 @@ func (i *Ipc) Send(cmd []byte) error {
 	}
 	defer i.conn.Close()
 
-	// The command has to be newline terminated
-	if cmd[len(cmd)-1] != '\n' {
-		cmd = append(cmd, '\n')
-	}
-
 	if _, err := fmt.Fprintln(i.conn, string(cmd)); err != nil {
 		return err
 	}
